@@ -1,9 +1,10 @@
 import os
 import streamlit as st
 
-# Force set the API key in all standard environment variables recognized by the Google GenAI SDK
-os.environ["GEMINI_API_KEY"] = "AQ.Ab8RN6Lx_P6nb24VQEyqYn9VyNFQBafHWYZLE0KyCNjHW0M-bA"
-os.environ["GOOGLE_API_KEY"] = "AQ.Ab8RN6Lx_P6nb24VQEyqYn9VyNFQBafHWYZLE0KyCNjHW0M-bA"
+# Explicitly set BOTH environment variables so the Google GenAI SDK catches it instantly
+API_KEY = "AQ.Ab8RN6Lx_P6nb24VQEyqYn9VyNFQBafHWYZLE0KyCNjHW0M-bA"
+os.environ["GOOGLE_API_KEY"] = API_KEY
+os.environ["GEMINI_API_KEY"] = API_KEY
 
 from google import genai
 from google.genai import types
@@ -15,8 +16,8 @@ st.set_page_config(page_title="My AI English & IELTS Teacher", page_icon="🎓",
 st.title("🎓 My Personal AI English & IELTS Teacher")
 st.write("Record your voice directly in the browser or type out whatever is on your mind. The AI will instantly evaluate your level, score, mistakes, and provide the correct answers.")
 
-# Initialize Gemini Client cleanly
-client = genai.Client()
+# Initialize Gemini Client explicitly with the API key
+client = genai.Client(api_key=API_KEY)
 
 # Tabs for Speaking and Writing Practice
 tab1, tab2 = st.tabs(["🎤 Speaking Practice (Record & Evaluate)", "✍️ Writing & Typing Practice (Type & Evaluate)"])
