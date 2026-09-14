@@ -9,7 +9,7 @@ st.set_page_config(page_title="My AI English & IELTS Teacher", page_icon="🎓",
 st.title("🎓 My Personal AI English & IELTS Teacher")
 st.write("Record your voice directly in the browser or type out whatever is on your mind. The AI will instantly evaluate your level, score, mistakes, and provide the correct answers.")
 
-# Initialize Gemini Client explicitly with the API key to prevent 401 unauthenticated errors
+# Initialize Gemini Client directly with your provided API key
 client = genai.Client(api_key="AQ.Ab8RN6Lx_P6nb24VQEyqYn9VyNFQBafHWYZLE0KyCNjHW0M-bA")
 
 # Tabs for Speaking and Writing Practice
@@ -20,17 +20,14 @@ with tab1:
     st.subheader("Check Your Speaking Skills")
     st.markdown("Click the **Record** button below to start speaking, and click it again to stop recording:")
 
-    # Browser-based direct audio recorder
     audio = audiorecorder("Click to Record", "Recording... Click to Stop")
 
     if len(audio) > 0:
-        # Play back the recorded audio
         st.audio(audio.export().read())
         
         if st.button("Evaluate My Speaking"):
             with st.spinner("AI is analyzing your speech..."):
                 try:
-                    # Export audio directly to bytes
                     audio_bytes_io = audio.export(format="wav")
                     audio_bytes = audio_bytes_io.read()
 
@@ -44,7 +41,6 @@ with tab1:
                     5. **Encouragement & Tips:**
                     """
 
-                    # Pass bytes using the correct SDK Part helper method
                     response = client.models.generate_content(
                         model='gemini-2.5-flash',
                         contents=[
