@@ -1,6 +1,7 @@
 import os
 import streamlit as st
 from google import genai
+from google.genai import types
 from audiorecorder import audiorecorder
 
 # Force the Gemini SDK to recognize the API key via environment variable
@@ -33,7 +34,7 @@ with tab1:
         if st.button("Evaluate My Speaking"):
             with st.spinner("AI is analyzing your speech..."):
                 try:
-                    # Export audio directly to bytes (bypassing file upload service)
+                    # Export audio directly to bytes
                     audio_bytes_io = audio.export(format="wav")
                     audio_bytes = audio_bytes_io.read()
 
@@ -47,11 +48,11 @@ with tab1:
                     5. **Encouragement & Tips:**
                     """
 
-                    # Pass bytes inline to avoid file upload 401 errors
+                    # Pass bytes using the correct SDK Part helper method
                     response = client.models.generate_content(
                         model='gemini-2.5-flash',
                         contents=[
-                            {"data": audio_bytes, "mime_type": "audio/wav"},
+                            types.Part.from_bytes(data=audio_bytes, mime_type="audio/wav"),
                             prompt_speaking
                         ]
                     )
