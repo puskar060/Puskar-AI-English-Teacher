@@ -31,15 +31,12 @@ with tab1:
         st.audio(audio.export().read())
         
         if st.button("Evaluate My Speaking"):
-            with st.spinner("AI is listening to your speech..."):
+            with st.spinner("AI is analyzing your speech..."):
                 try:
-                    # Save temporary audio file
-                    audio_file_path = "user_speech.wav"
-                    audio.export(audio_file_path, format="wav")
+                    # Export audio directly to bytes (bypassing file upload service)
+                    audio_bytes_io = audio.export(format="wav")
+                    audio_bytes = audio_bytes_io.read()
 
-                    # Upload and send to Gemini
-                    uploaded_file = client.files.upload(file=audio_file_path)
-                    
                     prompt_speaking = """
                     You are a friendly and helpful IELTS Speaking Examiner and English Teacher. 
                     Listen to this audio recording carefully and provide feedback in a very clear, simple structure:
@@ -50,13 +47,14 @@ with tab1:
                     5. **Encouragement & Tips:**
                     """
 
+                    # Pass bytes inline to avoid file upload 401 errors
                     response = client.models.generate_content(
                         model='gemini-2.5-flash',
-                        contents=[uploaded_file, prompt_speaking]
+                        contents=[
+                            {"data": audio_bytes, "mime_type": "audio/wav"},
+                            prompt_speaking
+                        ]
                     )
-
-                    if os.path.exists(audio_file_path):
-                        os.remove(audio_file_path)
 
                     st.success("Evaluation Complete!")
                     st.markdown(response.text)
