@@ -9,8 +9,12 @@ st.set_page_config(page_title="My AI English & IELTS Teacher", page_icon="🎓",
 st.title("🎓 My Personal AI English & IELTS Teacher")
 st.write("Record your voice directly in the browser or type out whatever is on your mind. The AI will instantly evaluate your level, score, mistakes, and provide the correct answers.")
 
-# API Key Setup
-api_key = "AQ.Ab8RN6Lx_P6nb24VQEyqYn9VyNFQBafHWYZLE0KyCNjHW0M-bA"
+# API Key Setup (Securely fetched from Streamlit Secrets with a fallback)
+try:
+    api_key = st.secrets["GEMINI_API_KEY"]
+except Exception:
+    api_key = "AQ.Ab8RN6Lx_P6nb24VQEyqYn9VyNFQBafHWYZLE0KyCNjHW0M-bA"
+
 client = genai.Client(api_key=api_key)
 
 # Tabs for Speaking and Writing Practice
@@ -49,7 +53,7 @@ with tab1:
                     """
 
                     response = client.models.generate_content(
-                        model='gemini-3.6-flash',
+                        model='gemini-2.5-flash',
                         contents=[uploaded_file, prompt_speaking]
                     )
 
@@ -88,7 +92,7 @@ with tab2:
                     """
 
                     response = client.models.generate_content(
-                        model='gemini-3.6-flash',
+                        model='gemini-2.5-flash',
                         contents=prompt_writing,
                     )
 
